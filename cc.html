@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, shrink-to-fit=no">
+  <title>Live Currency Converter</title>
+  <!-- Font Awesome 6 for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, sans-serif;
+      background: linear-gradient(145deg, #1e2b3c 0%, #0f1a26 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      margin: 0;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: 2.5rem;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      width: 100%;
+      max-width: 550px;
+      padding: 2.2rem 1.8rem;
+      transition: all 0.2s ease;
+      color: #f0f6ff;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 1.8rem;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      color: #eef5ff;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    h1 i {
+      color: #f6b83d;
+      font-size: 2rem;
+      filter: drop-shadow(0 4px 6px #00000040);
+    }
+
+    .converter-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+
+    .amount-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #b4c8e0;
+      margin-left: 0.3rem;
+    }
+
+    .amount-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .currency-symbol {
+      position: absolute;
+      left: 1.2rem;
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: #a0bede;
+      pointer-events: none;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 1.2rem 1.2rem 1.2rem 3rem;
+      font-size: 1.8rem;
+      font-weight: 500;
+      background: rgba(10, 20, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 1.5rem;
+      color: #ffffff;
+      outline: none;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+    }
+
+    input[type="number"]:focus {
+      border-color: #f6b83d;
+      box-shadow: 0 0 18px #f6b83d66, 0 8px 20px #00000050;
+      background: rgba(20, 30, 40, 0.8);
+    }
+
+    .currency-selectors {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: end;
+      gap: 0.8rem;
+    }
+
+    .select-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    select {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      font-size: 1rem;
+      font-weight: 500;
+      background: rgba(20, 30, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 1.2rem;
+      color: #fff;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23f6b83d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1.2rem;
+      transition: 0.2s;
+    }
+
+    select:focus {
+      border-color: #f6b83d;
+      box-shadow: 0 0 12px #f6b83d55;
+    }
+
+    .swap-icon {
+      background: rgba(246, 184, 61, 0.15);
+      border: 1px solid rgba(246, 184, 61, 0.5);
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f6b83d;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-bottom: 0.2rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+      align-self: center;
+    }
+
+    .swap-icon:hover {
+      background: #f6b83d;
+      color: #0f1a26;
+      transform: rotate(180deg);
+      border-color: #f6b83d;
+    }
+
+    .result-box {
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(14px);
+      border-radius: 1.8rem;
+      padding: 1.4rem 1.8rem;
+      margin-top: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.7);
+    }
+
+    .converted-amount {
+      font-size: 2.4rem;
+      font-weight: 600;
+      word-break: break-word;
+      color: #f6e9b3;
+      text-shadow: 0 2px 8px black;
+      line-height: 1.2;
+    }
+
+    .rate-details {
+      font-size: 0.9rem;
+      color: #b0c7e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .error-message {
+      background: rgba(220, 70, 70, 0.2);
+      border: 1px solid #ff7b7b;
+      color: #ffbebe;
+      padding: 0.9rem 1.2rem;
+      border-radius: 1.2rem;
+      margin-top: 0.8rem;
+      font-weight: 500;
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .loading-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #f6b83d;
+      font-size: 0.95rem;
+      margin-top: 0.3rem;
+    }
+
+    .attribution {
+      text-align: center;
+      margin-top: 1.8rem;
+      font-size: 0.75rem;
+      color: #7f95b2;
+      opacity: 0.9;
+    }
+
+    .attribution i {
+      color: #f6b83d;
+      margin: 0 0.2rem;
+    }
+
+    @media (max-width: 480px) {
+      .glass-card {
+        padding: 1.8rem 1.2rem;
+      }
+      .currency-selectors {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .swap-icon {
+        margin: 0 auto;
+        transform: rotate(90deg);
+      }
+      .swap-icon:hover {
+        transform: rotate(270deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="glass-card">
+    <h1>
+      <i class="fas fa-coins"></i> Currency Converter
+    </h1>
+
+    <div class="converter-panel">
+      <!-- Amount Input -->
+      <div class="amount-section">
+        <label><i class="fas fa-dollar-sign"></i> Amount</label>
+        <div class="amount-input-wrapper">
+          <span class="currency-symbol" id="dynamicSymbol">$</span>
+          <input type="number" id="amountInput" value="1" min="0" step="any" placeholder="Enter amount">
+        </div>
+      </div>
+
+      <!-- Currency Selectors with Swap -->
+      <div class="currency-selectors">
+        <div class="select-group">
+          <label>From</label>
+          <select id="fromCurrency">
+            <option value="USD">🇺🇸 USD - US Dollar</option>
+            <option value="EUR">🇪🇺 EUR - Euro</option>
+            <option value="GBP">🇬🇧 GBP - British Pound</option>
+            <option value="JPY">🇯🇵 JPY - Japanese Yen</option>
+            <option value="INR">🇮🇳 INR - Indian Rupee</option>
+            <option value="CAD">🇨🇦 CAD - Canadian Dollar</option>
+            <option value="AUD">🇦🇺 AUD - Australian Dollar</option>
+            <option value="CHF">🇨🇭 CHF - Swiss Franc</option>
+            <option value="CNY">🇨🇳 CNY - Chinese Yuan</option>
+            <option value="MXN">🇲🇽 MXN - Mexican Peso</option>
+            <option value="BRL">🇧🇷 BRL - Brazilian Real</option>
+            <option value="KRW">🇰🇷 KRW - South Korean Won</option>
+            <option value="SEK">🇸🇪 SEK - Swedish Krona</option>
+            <option value="NZD">🇳🇿 NZD - New Zealand Dollar</option>
+          </select>
+        </div>
+
+        <div class="swap-icon" id="swapButton" title="Swap currencies">
+          <i class="fas fa-exchange-alt"></i>
+        </div>
+
+        <div class="select-group">
+          <label>To</label>
+          <select id="toCurrency">
+            <option value="EUR">🇪🇺 EUR - Euro</option>
+            <option value="USD">🇺🇸 USD - US Dollar</option>
+            <option value="GBP">🇬🇧 GBP - British Pound</option>
+            <option value="JPY">🇯🇵 JPY - Japanese Yen</option>
+            <option value="INR">🇮🇳 INR - Indian Rupee</option>
+            <option value="CAD">🇨🇦 CAD - Canadian Dollar</option>
+            <option value="AUD">🇦🇺 AUD - Australian Dollar</option>
+            <option value="CHF">🇨🇭 CHF - Swiss Franc</option>
+            <option value="CNY">🇨🇳 CNY - Chinese Yuan</option>
+            <option value="MXN">🇲🇽 MXN - Mexican Peso</option>
+            <option value="BRL">🇧🇷 BRL - Brazilian Real</option>
+            <option value="KRW">🇰🇷 KRW - South Korean Won</option>
+            <option value="SEK">🇸🇪 SEK - Swedish Krona</option>
+            <option value="NZD">🇳🇿 NZD - New Zealand Dollar</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Result Display -->
+      <div class="result-box" id="resultContainer">
+        <div class="converted-amount" id="convertedValue">—</div>
+        <div class="rate-details">
+          <span id="exchangeRateText">1 USD = ... EUR</span>
+          <span id="lastUpdated"><i class="far fa-clock"></i> ...</span>
+        </div>
+      </div>
+
+      <!-- Error / fallback area -->
+      <div id="errorContainer" style="min-height: 2.5rem;"></div>
+    </div>
+    <div class="attribution">
+      <i class="fas fa-sync-alt fa-spin" id="loadingSpinner" style="display: none;"></i> 
+      <span>Live rates by ExchangeRate-API</span>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // ----- DOM Elements -----
+      const amountInput = document.getElementById('amountInput');
+      const fromSelect = document.getElementById('fromCurrency');
+      const toSelect = document.getElementById('toCurrency');
+      const swapBtn = document.getElementById('swapButton');
+      const convertedValueEl = document.getElementById('convertedValue');
+      const exchangeRateTextEl = document.getElementById('exchangeRateText');
+      const lastUpdatedEl = document.getElementById('lastUpdated');
+      const errorContainer = document.getElementById('errorContainer');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      const dynamicSymbol = document.getElementById('dynamicSymbol');
+
+      // ----- State -----
+      let currentRate = null;
+      let isFetching = false;
+      let latestFetchTime = null;
+      
+      // Using ExchangeRate-API (free tier, no key required for basic usage)
+      const API_BASE = 'https://api.exchangerate-api.com/v4/latest';
+      
+      // ----- Utility Functions -----
+      function formatCurrencyAmount(value, currencyCode) {
+        try {
+          return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currencyCode,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(value);
+        } catch (e) {
+          // fallback formatting
+          return `${value.toFixed(2)} ${currencyCode}`;
+        }
+      }
+
+      function getCurrencySymbol(currencyCode) {
+        try {
+          return (0).toLocaleString('en-US', {
+            style: 'currency',
+            currency: currencyCode,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          }).replace(/[0-9.,]/g, '').trim() || currencyCode;
+        } catch (e) {
+          return currencyCode;
+        }
+      }
+
+      function updateDynamicSymbol() {
+        const fromCurrency = fromSelect.value;
+        dynamicSymbol.textContent = getCurrencySymbol(fromCurrency);
+      }
+
+      function showError(message) {
+        errorContainer.innerHTML = `
+          <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i> ${message}
+          </div>
+        `;
+      }
+
+      function clearError() {
+        errorContainer.innerHTML = '';
+      }
+
+      function setLoadingState(loading) {
+        isFetching = loading;
+        if (loading) {
+          loadingSpinner.style.display = 'inline-block';
+        } else {
+          loadingSpinner.style.display = 'none';
+        }
+      }
+
+      // Update UI based on current rate and amount
+      function updateConversionDisplay() {
+        const amount = parseFloat(amountInput.value);
+        
+        if (isNaN(amount) || amount < 0) {
+          convertedValueEl.textContent = '—';
+          exchangeRateTextEl.textContent = 'Enter a valid amount';
+          lastUpdatedEl.innerHTML = '<i class="far fa-clock"></i> —';
+          return;
+        }
+
+        if (!currentRate) {
+          convertedValueEl.textContent = '...';
+          exchangeRateTextEl.textContent = 'Rate unavailable';
+          lastUpdatedEl.innerHTML = '<i class="far fa-clock"></i> ...';
+          return;
+        }
+
+        const converted = amount * currentRate;
+        const toCurrency = toSelect.value;
+        const fromCurrency = fromSelect.value;
+        
+        convertedValueEl.textContent = formatCurrencyAmount(converted, toCurrency);
+        
+        // Show rate info
+        exchangeRateTextEl.textContent = `1 ${fromCurrency} = ${currentRate.toFixed(4)} ${toCurrency}`;
+        
+        if (latestFetchTime) {
+          const timeString = latestFetchTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          lastUpdatedEl.innerHTML = `<i class="far fa-clock"></i> ${timeString}`;
+        } else {
+          lastUpdatedEl.innerHTML = `<i class="far fa-clock"></i> just now`;
+        }
+      }
+
+      // ----- API Fetch Function -----
+      async function fetchExchangeRate(baseCurrency, targetCurrency, isSwapUpdate = false) {
+        clearError();
+        setLoadingState(true);
+        
+        try {
+          const response = await fetch(`${API_BASE}/${baseCurrency}`);
+          
+          if (!response.ok) {
+            throw new Error(`API error: ${response.status} ${response.statusText}`);
+          }
+          
+          const data = await response.json();
+          
+          if (!data.rates || typeof data.rates[targetCurrency] === 'undefined') {
+            throw new Error(`Rate for ${targetCurrency} not available.`);
+          }
+          
+          // Success: update current rate
+          currentRate = data.rates[targetCurrency];
+          latestFetchTime = new Date();
+          
+          // Update display
+          updateConversionDisplay();
+          
+          // If it was a swap or manual change, no need to adjust amount
+          if (!isSwapUpdate) {
+            // keep existing amount
+          }
+          
+        } catch (error) {
+          console.error('Fetch error:', error);
+          currentRate = null;
+          latestFetchTime = null;
+          
+          // Show fallback message
+          let userMessage = 'Failed to fetch exchange rates. Please check your connection.';
+          if (error.message.includes('Rate for')) {
+            userMessage = `Exchange rate for ${targetCurrency} is not available right now.`;
+          } else if (error.message.includes('API error')) {
+            userMessage = 'Exchange rate service temporarily unavailable.';
+          } else if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+            userMessage = 'Network error. Please check your internet connection.';
+          }
+          
+          showError(userMessage);
+          convertedValueEl.textContent = '—';
+          exchangeRateTextEl.textContent = 'Rate unavailable';
+          lastUpdatedEl.innerHTML = '<i class="far fa-clock"></i> —';
+        } finally {
+          setLoadingState(false);
+        }
+      }
+
+      // ----- Event Handlers -----
+      function onAmountChange() {
+        if (!currentRate) {
+          // If no rate yet, maybe trigger fetch? But avoid too many calls.
+          // We'll just update display (shows placeholder)
+          updateConversionDisplay();
+          return;
+        }
+        updateConversionDisplay();
+      }
+
+      async function onCurrencyChange(source) {
+        const from = fromSelect.value;
+        const to = toSelect.value;
+        
+        updateDynamicSymbol();
+        
+        // If both currencies are same, set rate to 1 directly
+        if (from === to) {
+          currentRate = 1;
+          latestFetchTime = new Date();
+          clearError();
+          updateConversionDisplay();
+          return;
+        }
+        
+        // Fetch new rate for the pair
+        await fetchExchangeRate(from, to, false);
+      }
+
+      function onSwap() {
+        const fromVal = fromSelect.value;
+        const toVal = toSelect.value;
+        
+        // Swap values
+        fromSelect.value = toVal;
+        toSelect.value = fromVal;
+        
+        updateDynamicSymbol();
+        
+        // After swap, if same currency -> rate=1
+        if (fromSelect.value === toSelect.value) {
+          currentRate = 1;
+          latestFetchTime = new Date();
+          clearError();
+          updateConversionDisplay();
+          return;
+        }
+        
+        // Fetch new rate based on swapped currencies
+        fetchExchangeRate(fromSelect.value, toSelect.value, true);
+      }
+
+      // ----- Initialization -----
+      function initialize() {
+        // Set default selections: USD -> EUR (already set in HTML)
+        updateDynamicSymbol();
+        
+        // Attach event listeners
+        amountInput.addEventListener('input', onAmountChange);
+        fromSelect.addEventListener('change', onCurrencyChange);
+        toSelect.addEventListener('change', onCurrencyChange);
+        swapBtn.addEventListener('click', onSwap);
+        
+        // Initial fetch for default pair (USD -> EUR)
+        const initialFrom = fromSelect.value;
+        const initialTo = toSelect.value;
+        
+        if (initialFrom === initialTo) {
+          currentRate = 1;
+          latestFetchTime = new Date();
+          updateConversionDisplay();
+        } else {
+          fetchExchangeRate(initialFrom, initialTo, false);
+        }
+      }
+
+      // Start the app
+      initialize();
+    })();
+  </script>
+</body>
+</html>
